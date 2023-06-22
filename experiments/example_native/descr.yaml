@@ -1,0 +1,50 @@
+---
+# Experiment configuration
+epochs: 2
+rounds: 5
+epochs_per_cycle: 1
+wait_for_clients: true
+net: Cifar10CNN
+dataset: cifar10
+# Use cuda is available; setting to false will force CPU
+cuda: false
+profiling_time: 100
+warmup_round: false
+output_location: 'output/example_native'
+tensor_board_active: true
+clients_per_round: 3
+unique_pairs: false
+#node_groups:
+#  slow: [1, 1]
+#  medium: [2, 2]
+#  fast: [3, 3]
+data_sampler: "n labels" # "limit labels" || "q sampler" || "dirichlet" || "uniform" (default)
+data_sampler_args:
+  - 2     # label limit || q probability || alpha || unused
+  - 42    # random seed || random seed || random seed || unused
+num_clients: 3
+replications: 1
+#algorithm_name: 'offloading'
+deadline_time: 100
+deploy:
+  docker:
+    base_path: deploy/docker
+    federator:
+      stub-name: system_stub.yml
+      pin-cores: true
+      num-cores: 1
+    clients:
+      default:
+        - cpu-speed: 1.5
+          num-cores: 1
+          rank: 1
+          stub-name: stub_default.yml
+        - cpu-speed: 0.3
+          num-cores: 1.0
+          rank: 2
+          stub-name: stub_default.yml
+        - cpu-speed: 0.2
+          num-cores: 1.0
+          rank: 3
+          stub-name: stub_default.yml
+
