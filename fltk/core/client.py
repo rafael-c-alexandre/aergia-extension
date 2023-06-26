@@ -167,7 +167,7 @@ class Client(Node):
                     # offloading_future = self.message_async(self.offloading_decision['node-id'], Client.receive_offloading_request, self.id, self.get_nn_parameters(), self.offloading_decision['response_id_to'], rem_local_updates)
                     # offloading_future.then(offloading_cb)
                     
-                    self.message(self.offloading_decision['node-id'], Client.receive_offloading_request, self.id, self.get_nn_parameters(), self.offloading_decision['response_id_to'], rem_local_updates, self.offloading_decision["number_of_offloaded_models"])
+                    self.message(self.offloading_decision['node-id'], Client.receive_offloading_request, self.id, self.get_nn_parameters(), self.offloading_decision['response_id_to'], rem_local_updates)
                     # offloading_future.then(lambda x: self.message_async(self.offloading_decision['node-id'], Client.unlock))
                     self.freeze_layers(network, net_split_point)
                     self.logger.info(f'Offloading request done -> Unlocking client {self.offloading_decision["node-id"]}')
@@ -260,12 +260,11 @@ class Client(Node):
         self.round_alternate_models_to_train = -1
         self.round_alternate_trained_models = 0
 
-    def receive_offloading_request(self, sender_id, model_params, reponse_id: str, rem_local_updates: int, alternate_models: int):
+    def receive_offloading_request(self, sender_id, model_params, reponse_id: str, rem_local_updates: int):
         self.logger.info('Received offloading request')
         self.has_offloading_request = True
         self.offloading_response[sender_id] = reponse_id
         self.offloading_rem_local_updates[sender_id] = rem_local_updates
-        self.round_alternate_models_to_train = alternate_models
         # Initialize net instead of just copying model params
         # model_params
         self.set_net(self.load_default_model(), sender_id)
@@ -273,12 +272,14 @@ class Client(Node):
         # net = self.nets[sender_id]
         # self.nets[sender_id] = model_params
 
-    def receive_offloading_decision(self, node_id, when: float, response_id_to, number_of_offloaded_models):
+    def receive_offloading_decision(self, node_id, when: float, response_id_to):
         self.offloading_decision['node-id'] = node_id
         self.offloading_decision['when'] = when
         self.offloading_decision['response_id_to'] = response_id_to
-        self.offloading_decision["number_of_offloaded_models"] = number_of_offloaded_models
         # self.offloading_decision['response_id_from'] = response_id_from
+    
+    def will_receive_offload(self, number_of_offloaded_models):
+        self.round_alternate_models_to_train = number_of_offloaded_models
 
     def stop_training(self):
         self.terminate_training = True

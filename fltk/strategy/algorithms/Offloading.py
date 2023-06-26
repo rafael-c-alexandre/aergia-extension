@@ -462,13 +462,14 @@ class Offloading(FederatedAlgorithm):
             for decision in offloading_decisions:
                 if decision["to"] in unreleased_client_ids:
                     unreleased_client_ids.remove(decision["to"])
+                    federator_state.message_async(decision["to"], 'will_receive_offload', offloading_models_count[decision["to"]])
                 unreleased_client_ids.remove(decision["from"])
                 decision['response_id_to'] = f"{round_id}-" + decision['response_id_to']
                 # decision['response_id_from'] = f"{round_id}-" + decision['response_id_from']
                 federator_state.logger.info(f'Client {decision["from"]} will offload to client {decision["to"]}')
                 federator_state.create_response_expectation(decision['response_id_to'])
                 # federator_state.create_response_expectation(decision['response_id_from'])
-                federator_state.message_async(decision['from'], 'receive_offloading_decision', decision['to'], decision['when'], decision['response_id_to'], offloading_models_count[decision["to"]])
+                federator_state.message_async(decision['from'], 'receive_offloading_decision', decision['to'], decision['when'], decision['response_id_to'])
                 federator_state.message_async(decision['from'], 'unlock')
 
             # for c1, c2 in offloading_decision:
