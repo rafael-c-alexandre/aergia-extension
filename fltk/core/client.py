@@ -255,6 +255,10 @@ class Client(Node):
 
     def get_client_datasize(self):
         return len(self.dataset.get_train_sampler())
+    
+    def reset_offloading_status(self):
+        self.round_alternate_models_to_train = -1
+        self.round_alternate_trained_models = 0
 
     def receive_offloading_request(self, sender_id, model_params, reponse_id: str, rem_local_updates: int, alternate_models: int):
         self.logger.info('Received offloading request')
@@ -318,7 +322,6 @@ class Client(Node):
             self.logger.info(f'Available keys in nets dict: {self.nets.keys()}')
             self.logger.info(f'Other keys in nets dict: {self.nets.other_keys()}')
             while self.round_alternate_trained_models < self.round_alternate_models_to_train:
-                print(len(self.nets.other_keys()))
                 if len(self.nets.other_keys()) == 0:
                     time.sleep(0.1)
                     continue
@@ -354,7 +357,9 @@ class Client(Node):
         # for k, v in weights.items():
         #     weights[k] = v.cpu()
         self.logger.info('Ending training')
+        self.reset_offloading_status()
         # return loss, weights, accuracy, test_loss, round_duration, train_duration, test_duration
+
 
     def __del__(self):
         self.logger.info(f'Client {self.id} is stopping')
