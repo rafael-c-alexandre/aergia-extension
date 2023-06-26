@@ -262,7 +262,6 @@ class Client(Node):
 
     def receive_offloading_request(self, sender_id, model_params, reponse_id: str, rem_local_updates: int):
         self.logger.info('Received offloading request')
-        self.has_offloading_request = True
         self.offloading_response[sender_id] = reponse_id
         self.offloading_rem_local_updates[sender_id] = rem_local_updates
         # Initialize net instead of just copying model params
@@ -280,6 +279,7 @@ class Client(Node):
     
     def will_receive_offload(self, number_of_offloaded_models):
         self.round_alternate_models_to_train = number_of_offloaded_models
+        self.has_offloading_request = True
 
     def stop_training(self):
         self.terminate_training = True
