@@ -14,6 +14,8 @@ class Client(Node):
     running = False
     terminate_training = False
     locked = False
+    round_alternate_trained_models = 0
+    round_alternate_models_to_train = -1
     has_offloading_request = False
     offloading_response = {}
     offloading_rem_local_updates = {}
@@ -165,7 +167,7 @@ class Client(Node):
                     # offloading_future = self.message_async(self.offloading_decision['node-id'], Client.receive_offloading_request, self.id, self.get_nn_parameters(), self.offloading_decision['response_id_to'], rem_local_updates)
                     # offloading_future.then(offloading_cb)
                     
-                    self.message(self.offloading_decision['node-id'], Client.receive_offloading_request, self.id, self.get_nn_parameters(), self.offloading_decision['response_id_to'], rem_local_updates)
+                    self.message(self.offloading_decision['node-id'], Client.receive_offloading_request, self.id, self.get_nn_parameters(), self.offloading_decision['response_id_to'], rem_local_updates, self.offloading_decision["number_of_offloaded_models"])
                     # offloading_future.then(lambda x: self.message_async(self.offloading_decision['node-id'], Client.unlock))
                     self.freeze_layers(network, net_split_point)
                     self.logger.info(f'Offloading request done -> Unlocking client {self.offloading_decision["node-id"]}')
@@ -254,11 +256,12 @@ class Client(Node):
     def get_client_datasize(self):
         return len(self.dataset.get_train_sampler())
 
-    def receive_offloading_request(self, sender_id, model_params, reponse_id: str, rem_local_updates: int):
+    def receive_offloading_request(self, sender_id, model_params, reponse_id: str, rem_local_updates: int, alternate_models: int):
         self.logger.info('Received offloading request')
         self.has_offloading_request = True
         self.offloading_response[sender_id] = reponse_id
         self.offloading_rem_local_updates[sender_id] = rem_local_updates
+        self.round_alternate_models_to_train = alternate_models
         # Initialize net instead of just copying model params
         # model_params
         self.set_net(self.load_default_model(), sender_id)
@@ -266,10 +269,11 @@ class Client(Node):
         # net = self.nets[sender_id]
         # self.nets[sender_id] = model_params
 
-    def receive_offloading_decision(self, node_id, when: float, response_id_to):
+    def receive_offloading_decision(self, node_id, when: float, response_id_to, number_of_offloaded_models):
         self.offloading_decision['node-id'] = node_id
         self.offloading_decision['when'] = when
         self.offloading_decision['response_id_to'] = response_id_to
+        self.offloading_decision["number_of_offloaded_models"] = number_of_offloaded_models
         # self.offloading_decision['response_id_from'] = response_id_from
 
     def stop_training(self):
@@ -300,7 +304,7 @@ class Client(Node):
         #      the client about how many models it will train
         while self.is_locked():
             time.sleep(0.1)
-
+       
         if self.offloading_decision:
             # Do not use this offloading decision because we are already done
             # Just unlock the other waiting node and continue
@@ -313,7 +317,12 @@ class Client(Node):
             offloading_train_start = time.time()
             self.logger.info(f'Available keys in nets dict: {self.nets.keys()}')
             self.logger.info(f'Other keys in nets dict: {self.nets.other_keys()}')
-            for other_client_id in self.nets.other_keys():
+            while self.round_alternate_trained_models < self.round_alternate_models_to_train:
+                print(len(self.nets.other_keys()))
+                if len(self.nets.other_keys()) == 0:
+                    time.sleep(0.1)
+                    continue
+                other_client_id = self.nets.other_keys()[0]
                 offloading_response_id = self.offloading_response[other_client_id]
                 self.logger.info(f'I need to train the offloading model from client {other_client_id} as well!')
                 self.nets.select(other_client_id)
@@ -332,6 +341,8 @@ class Client(Node):
                 self.message_async(server_ref, 'receive_training_result', offloading_response_id,
                                     [loss, weights, accuracy, test_loss, round_duration, offloading_train_duration, offloading_test_duration, num_samples])
                 trained_offloaded_model = self.nets.remove_model(other_client_id)
+                self.round_alternate_trained_models += 1
+                
             self.nets.reset()
             # @TODO: Use offloading response_id to send offloaded weights to the server
             self.has_offloading_request = False

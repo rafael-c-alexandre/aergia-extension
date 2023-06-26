@@ -4,8 +4,8 @@ epochs: 2
 rounds: 1
 epochs_per_cycle: 1
 wait_for_clients: true
-net: FashionMNISTCNN
-dataset: fashion-mnist
+net: MNISTCNN
+dataset: mnist
 # Use cuda is available; setting to false will force CPU
 cuda: false
 profiling_time: 100
@@ -39,11 +39,11 @@ deploy:
           num-cores: 1.0
           rank: 1
           stub-name: stub_default.yml
-        - cpu-speed: 1.0
+        - cpu-speed: 0.2
           num-cores: 1.0
           rank: 2
           stub-name: stub_default.yml
-        - cpu-speed: 1.0
+        - cpu-speed: 0.2
           num-cores: 1.0
           rank: 3
           stub-name: stub_default.yml
