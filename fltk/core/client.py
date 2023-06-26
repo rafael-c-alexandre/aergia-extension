@@ -48,6 +48,12 @@ class Client(Node):
         self.logger.info(f'Unlocking client {self.id}')
         self.locked = False
 
+    def not_offload(self):
+        self.logger.info('Not needed - one less model to train')
+        self.logger.info(f'Unlocking client {self.id}')
+        self.locked = False
+        self.round_alternate_models_to_train -= 1
+    
     def is_locked(self):
         return self.locked
 
@@ -315,7 +321,7 @@ class Client(Node):
             # Just unlock the other waiting node and continue
             self.logger.info(f'{self.id} is not offloading to {self.offloading_decision["node-id"]}; Reason: training already done')
             self.logger.info(f'Offloading request to be ignored -> Unlocking client {self.offloading_decision["node-id"]}')
-            self.message_async(self.offloading_decision['node-id'], Client.unlock)
+            self.message_async(self.offloading_decision['node-id'], Client.not_offload)
             self.offloading_decision = {}
 
         if self.has_offloading_request:
