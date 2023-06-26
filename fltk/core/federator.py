@@ -84,7 +84,6 @@ class Federator(Node):
         self.writer.flush()
 
 
-
     def create_clients(self):
         self.logger.info('Creating clients')
         if self.config.single_machine:
@@ -255,10 +254,10 @@ class Federator(Node):
         self.logger.info(f"Clients local accuracy average: {np.average(client_accuracies)}")
         if n_clients_to_consider > 0:
             self.logger.info(f"Best {self.config.fairness_percentage * 100}% accuracies: {np.average(client_accuracies[-n_clients_to_consider:])}")
-            self.logger.info(f"Worst {self.config.fairness_percentage * 100}% accuracies: {np.average(client_accuracies[:n_clients_to_consider])}")
+            self.logger.info(f"Worst {self.config.fairness_percentage * 100}% accuracies: {np.average(client_accuracies[:n_clients_to_consider] )}")
         self.logger.info(f"Clients local accuracy variance: {np.var(client_accuracies)}")
         
-
+        
     def test(self, net):
         start_time = time.time()
         correct = 0
