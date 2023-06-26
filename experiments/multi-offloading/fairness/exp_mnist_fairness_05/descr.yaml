@@ -23,7 +23,7 @@ data_sampler_args:
   - 2     # label limit || q probability || alpha || unused
   - 42    # random seed || random seed || random seed || unused
 num_clients: 23
-replications: 3
+replications: 1
 deadline_time: 100
 deploy:
   docker:
