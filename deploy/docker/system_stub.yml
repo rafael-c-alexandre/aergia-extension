@@ -20,7 +20,7 @@ services:
       - NIC=eth0
       - OPTIONAL_PARAMS=${OPTIONAL_PARAMS}
     ports:
-      - "5005:5000" # {machine-port}:{docker-port}
+      - "5200:5000" # {machine-port}:{docker-port}
     networks:
       default:
         ipv4_address: 10.5.0.11
