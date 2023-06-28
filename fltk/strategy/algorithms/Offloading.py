@@ -244,7 +244,7 @@ def find_offloading_pair(slow_id, performance_data: dict, similarity_matrix: np.
     
     slow_client = performance_data[slow_id]
     current_lowest_cb = slow_client['ect']
-    current_lowest_cost =  performance_data[slow_id]['ect']
+    current_lowest_cost =  slow_client['rl'] * slow_client['cut']
 
     for k,v in performance_data.items():
         if k != slow_id:
@@ -252,7 +252,8 @@ def find_offloading_pair(slow_id, performance_data: dict, similarity_matrix: np.
             offloading_point = find_offloading_point(performance_data[slow_id], performance_data[k])
             
             c_s, c_f = calc_decision_completion_time_multi_offloading(slow_id, potential_fast_id, performance_data, offloading_point)
-            pair_cost = performance_data[potential_fast_id]['ect'] * \
+
+            pair_cost = c_f * \
                         (1 + math.exp(similarity_matrix[clients.index(slow_id)][clients.index(potential_fast_id)] * offloading_sim_factor))
             
             if performance_data[potential_fast_id]['acb'] > c_f and \
