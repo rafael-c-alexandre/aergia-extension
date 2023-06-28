@@ -52,6 +52,7 @@ class Federator(Node):
     algorithm: FederatedAlgorithm = None
     algorithm_state = {}
     clients_test_accuracy = []
+    round_times = []
 
 
     def __init__(self, id: int, rank: int, world_size: int, config: Config):
@@ -215,7 +216,9 @@ class Federator(Node):
         self.logger.info('Federator is stopping')
         
         self.logger.info("Training duration: {:.3f}s".format(time.time() - start_time))
-
+        round_times_str = ','.join(self.round_times)
+        self.logger.info(f'Round times: {round_times_str}')
+        
 
     def save_data(self):
         self.exp_data.save()
@@ -468,5 +471,6 @@ class Federator(Node):
         self.writer.flush()
         self.exp_data.append(FederatorRecord(len(self.selected_clients), round_id, duration, test_loss, test_accuracy))
         self.logger.info(f'[Round {round_id:>3}] Round duration is {duration} seconds')
+        self.round_times.append(duration)
         self.performance_data = {}
         self.algorithm.hook_post_training(self, self.algorithm_state)
