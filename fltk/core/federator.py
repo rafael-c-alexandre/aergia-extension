@@ -471,6 +471,6 @@ class Federator(Node):
         self.writer.flush()
         self.exp_data.append(FederatorRecord(len(self.selected_clients), round_id, duration, test_loss, test_accuracy))
         self.logger.info(f'[Round {round_id:>3}] Round duration is {duration} seconds')
-        self.round_times.append(round(duration,3))
+        self.round_times.append(str(round(duration,3)))
         self.performance_data = {}
         self.algorithm.hook_post_training(self, self.algorithm_state)
