@@ -253,7 +253,7 @@ def find_offloading_pair(slow_id, performance_data: dict, similarity_matrix: np.
             
             c_s, c_f = calc_decision_completion_time_multi_offloading(slow_id, potential_fast_id, performance_data, offloading_point)
             pair_cost = performance_data[potential_fast_id]['ect'] * \
-                        (1 + math.exp(1 + similarity_matrix[clients.index(slow_id)][clients.index(potential_fast_id)] * offloading_sim_factor))
+                        (1 + math.exp(similarity_matrix[clients.index(slow_id)][clients.index(potential_fast_id)] * offloading_sim_factor))
             
             if performance_data[potential_fast_id]['acb'] > c_f and \
                performance_data[potential_fast_id]['cb'] + c_f < current_lowest_cb and \
