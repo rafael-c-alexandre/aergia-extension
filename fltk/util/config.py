@@ -18,7 +18,7 @@ class Config:
     test_batch_size: int = 1000
     rounds: int = 2
     epochs: int = 1
-    lr: float = 0.01
+    lr: float = 0.0001
     momentum: float = 0.1
     cuda: bool = False
     shuffle: bool = False
@@ -30,10 +30,10 @@ class Config:
     # @TODO: Set seed from configuration
     rng_seed = 0
     # Enum
-    optimizer: Optimizations = Optimizations.sgd
+    optimizer: Optimizations = Optimizations.adam
     optimizer_args = {
         'lr': lr,
-        'momentum': momentum
+        #'momentum': momentum
     }
     loss_function = torch.nn.CrossEntropyLoss
     # Enum

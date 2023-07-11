@@ -25,6 +25,7 @@ class DataSampler(Enum):
 @unique
 class Optimizations(Enum):
     sgd = 'SGD'
+    adam = "Adam"
     fedprox = 'FedProx'
     fednova = 'FedNova'
 

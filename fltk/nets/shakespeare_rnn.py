@@ -12,7 +12,7 @@ import torch
 
 
 class RNN_Shakespeare(nn.Module):
-    def __init__(self, vocab_size=80, embedding_dim=8, hidden_size=256):
+    def __init__(self, vocab_size=80, embedding_dim=128, hidden_size=128):
         """Creates a RNN model using LSTM layers for Shakespeare language models (next character prediction task).
 
         Args:
@@ -40,6 +40,7 @@ class RNN_Shakespeare(nn.Module):
                             hidden_size=hidden_size,
                             num_layers=2,
                             batch_first=True)
+        self.drop = nn.Dropout(0.5)
         self.fc = nn.Linear(hidden_size, vocab_size)
     
 
@@ -47,7 +48,7 @@ class RNN_Shakespeare(nn.Module):
         embeds = self.embeddings(input_seq)  # (batch, seq_len, embedding_dim)
         lstm_out, _ = self.lstm(embeds)
         final_hidden_state = lstm_out[:, -1]
-        output = self.fc(final_hidden_state)
+        output = self.fc(self.drop(final_hidden_state))
         return output
 
 

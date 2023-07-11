@@ -1,9 +1,13 @@
 from fltk.datasets.distributed import DistDataset
 from torchvision import datasets
 from torchvision import transforms
-from torch.utils.data import DataLoader, DistributedSampler
+from torch.utils.data import DataLoader, DistributedSampler, ConcatDataset
 
 from fltk.samplers import get_sampler
+
+from .transform.functionalRotate import FunctionalRotate
+from .transform.functionalHorizontalFlip import FunctionalHorizontalFlip
+from .transform.functionalGrayscale import FunctionalGrayscale
 
 
 class DistFashionMNISTDataset(DistDataset):
@@ -17,8 +21,13 @@ class DistFashionMNISTDataset(DistDataset):
         dist_loader_text = "distributed" if self.args.get_distributed() else ""
         self.logger.debug(f"Loading '{dist_loader_text}' Fashion MNIST train data")
 
-        self.train_dataset = datasets.FashionMNIST(root=self.get_args().get_data_path(), train=True, download=True,
-                                              transform=transforms.Compose([transforms.ToTensor()]))
+        dataset_parts = []
+        dataset_parts.append(datasets.FashionMNIST(root=self.get_args().get_data_path(), train=True, download=True,
+                                              transform=transforms.Compose([transforms.ToTensor(),
+                                                                            FunctionalRotate(4)])))
+        dataset_parts.append(datasets.FashionMNIST(root=self.get_args().get_data_path(), train=True, download=True,
+                                              transform=transforms.Compose([transforms.ToTensor()])))
+        self.train_dataset = ConcatDataset(dataset_parts)
         self.train_sampler = get_sampler(self.train_dataset, self.args)
         self.train_loader = DataLoader(self.train_dataset, batch_size=self.args.batch_size, sampler=self.train_sampler)
 

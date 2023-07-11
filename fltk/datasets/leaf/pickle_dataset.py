@@ -80,8 +80,13 @@ class PickleDataset:
                 dataset_list.append(pickle.load(open(file, 'rb')))
             dataset = ConcatDataset(dataset_list)
         else:
-            pickle_file = self.pickle_root / self.dataset_name / dataset_type / f"{dataset_type}_{client_id}.pkl"
-            dataset = pickle.load(open(pickle_file, 'rb'))
+            client_id *= 10
+            dataset_list = []
+            for _ in range(0,10):
+                pickle_file = self.pickle_root / self.dataset_name / dataset_type / f"{dataset_type}_{client_id}.pkl"
+                dataset_list.append(pickle.load(open(pickle_file, 'rb')))
+                client_id += 1
+            dataset = ConcatDataset(dataset_list)
         return dataset
 
     def _read_process_json_data(self, dataset_type: str, paths_to_json: List[Path]):

@@ -1,14 +1,14 @@
 ---
 # Experiment configuration
 epochs: 2
-rounds: 1
+rounds: 10
 epochs_per_cycle: 1
 wait_for_clients: true
-net: MNISTCNN
-dataset: mnist
+net: FashionMNISTCNN
+dataset: fashion-mnist
 # Use cuda is available; setting to false will force CPU
 cuda: false
-profiling_time: 100
+profiling_time: 10
 warmup_round: false
 output_location: 'output/example_docker'
 tensor_board_active: true
@@ -39,11 +39,11 @@ deploy:
           num-cores: 1.0
           rank: 1
           stub-name: stub_default.yml
-        - cpu-speed: 0.2
+        - cpu-speed: 1.0
           num-cores: 1.0
           rank: 2
           stub-name: stub_default.yml
-        - cpu-speed: 0.2
+        - cpu-speed: 1.0
           num-cores: 1.0
           rank: 3
           stub-name: stub_default.yml
