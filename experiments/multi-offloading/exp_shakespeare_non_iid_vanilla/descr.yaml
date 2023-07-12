@@ -8,7 +8,7 @@ net: ShakespeareRNN
 dataset: shakespeare
 # Use cuda is available; setting to false will force CPU
 cuda: false
-profiling_time: 20
+profiling_time: 50
 warmup_round: false
 output_location: 'output/exp_shakespeare_non_iid_vanilla'
 tensor_board_active: true
@@ -18,7 +18,7 @@ unique_pairs: true
 #  slow: [1, 1]
 #  medium: [2, 2]
 #  fast: [3, 3]
-data_sampler: "n labels" # "limit labels" || "q sampler" || "dirichlet" || "uniform" (default)
+data_sampler: "uniform" # "limit labels" || "q sampler" || "dirichlet" || "uniform" (default)
 data_sampler_args:
   - 4     # label limit || q probability || alpha || unused
   - 42    # random seed || random seed || random seed || unused

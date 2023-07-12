@@ -26,6 +26,9 @@ class DistFashionMNISTDataset(DistDataset):
                                               transform=transforms.Compose([transforms.ToTensor(),
                                                                             FunctionalRotate(4)])))
         dataset_parts.append(datasets.FashionMNIST(root=self.get_args().get_data_path(), train=True, download=True,
+                                              transform=transforms.Compose([transforms.ToTensor(),
+                                                                            FunctionalRotate(4)])))
+        dataset_parts.append(datasets.FashionMNIST(root=self.get_args().get_data_path(), train=True, download=True,
                                               transform=transforms.Compose([transforms.ToTensor()])))
         self.train_dataset = ConcatDataset(dataset_parts)
         self.train_sampler = get_sampler(self.train_dataset, self.args)

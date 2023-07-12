@@ -1,6 +1,6 @@
 import random
 import logging
-from torch.utils.data import DistributedSampler, Dataset
+from torch.utils.data import DistributedSampler, Dataset, ConcatDataset
 from typing import Iterator
 import numpy as np
 
@@ -17,15 +17,28 @@ class DistributedSamplerWrapper(DistributedSampler):
         if hasattr(dataset, 'classes'):
             self.n_labels = len(dataset.classes)
         else:
-            self.n_labels = 0
+            if isinstance(dataset, ConcatDataset):
+                self.n_labels = len(dataset.datasets[0].classes)
+            else:
+                self.n_labels = 0
         self.seed = seed
 
 
     def order_by_label(self, dataset):
         # order the indices by label
-        ordered_by_label = [[] for i in range(len(dataset.classes))]
-        for index, target in enumerate(dataset.targets):
-            ordered_by_label[target].append(index)
+        ordered_by_label = [[] for i in range(self.n_labels)]
+        
+        if isinstance(dataset, ConcatDataset):
+            dataset_list = dataset.datasets
+            concat_targets = []
+            for ds in dataset_list:
+                concat_targets.extend(ds.targets)
+            for index, target in enumerate(concat_targets):
+                ordered_by_label[target].append(index)
+        
+        else:
+            for index, target in enumerate(dataset.targets):
+                ordered_by_label[target].append(index)
 
         return ordered_by_label
 

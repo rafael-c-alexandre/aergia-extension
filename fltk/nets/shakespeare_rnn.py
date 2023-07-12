@@ -40,7 +40,7 @@ class RNN_Shakespeare(nn.Module):
                             hidden_size=hidden_size,
                             num_layers=2,
                             batch_first=True)
-        self.drop = nn.Dropout(0.5)
+        self.drop = nn.Dropout(0.1)
         self.fc = nn.Linear(hidden_size, vocab_size)
     
 

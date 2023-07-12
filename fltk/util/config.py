@@ -18,7 +18,7 @@ class Config:
     test_batch_size: int = 1000
     rounds: int = 2
     epochs: int = 1
-    lr: float = 0.0001
+    lr: float = 0.001
     momentum: float = 0.1
     cuda: bool = False
     shuffle: bool = False
