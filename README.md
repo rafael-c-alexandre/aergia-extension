@@ -65,7 +65,7 @@ With the method as single machine is used to execute all the different nodes in 
 The execution is done in a sequential manner, i.e. first node 1 is executed, then node 2, and so on. One of the upsides of this option is the ability to use GPU acceleration for the computations.
 
 ### Docker-Compose (Emulation)
-With systems like docker we can emulate a federated learning system on a single machine. Each node is allocated to one or more CPU cores and executed in an isolated container. This allows for real-time experiments where timing is important and where the execution of clients have effect on eachother. Docker also allows for containers to be limited by CPU speed, RAM, and network properties.
+With systems like docker we can emulate a federated learning system on a single machine. Each node is allocated to one or more CPU cores and executed in an isolated container. This allows for real-time experiments where timing is important and where the execution of clients have effect on eachother. Docker also allows for containers to be limited by CPU speed, RAM, and network properties. A multi-host configuration is also available (see examples below).
 
 ### Real distributed (Google Cloud)
 In this case, the code is deployed natively on a machine, for example a cluster. 
@@ -127,6 +127,37 @@ Run example experiment
 ```bash
 python3 -m fltk util-run experiments/example_docker/
 ```
+
+#### Multi-host configuration
+It is also possible to run Aergia on multiple hosts in order to scale the experiments up to more clients.
+
+For this mode to work, make sure that `docker swarm` mode is enabled. A manager node needs to be created
+```bash
+docker swarm init
+```
+
+On the other hosts join the swarm cluster.
+
+
+A new overlay docker network needs to be created 
+```bash
+docker network create --driver=overlay --attachable local_network_dev --subnet=10.5.0.0/16
+```
+
+On one host, run the experiment with the federator and some clients
+```bash
+python3 -m fltk util-run experiments/example_docker/ --clients 1-10
+```
+
+**Note:** The previous command deploys the federator and clients 1-10 in one host.
+
+On another host, run with other clients (no federator)
+```bash
+python3 -m fltk util-run experiments/example_docker/ --clients 11-20 --worker
+```
+
+**Note:** The previous command deploys the clients 11-20 in one host without runnning the federator (`--worker` flag).
+
 
 ### Single machine (Native)
 
