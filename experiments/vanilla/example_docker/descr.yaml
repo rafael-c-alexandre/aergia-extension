@@ -1,7 +1,7 @@
 ---
 # Experiment configuration
 epochs: 2
-rounds: 2
+rounds: 8
 epochs_per_cycle: 1
 wait_for_clients: true
 net: MNISTCNN
@@ -22,7 +22,7 @@ data_sampler: "uniform" # "limit labels" || "q sampler" || "dirichlet" || "unifo
 data_sampler_args:
   - 2     # label limit || q probability || alpha || unused
   - 42    # random seed || random seed || random seed || unused
-num_clients: 3
+num_clients: 30
 replications: 1
 #algorithm_name: 'offloading'
 deadline_time: 100
@@ -46,4 +46,112 @@ deploy:
         - cpu-speed: 1.0
           num-cores: 1.0
           rank: 3
+          stub-name: stub_default.yml
+        - cpu-speed: 1.0
+          num-cores: 1.0
+          rank: 4
+          stub-name: stub_default.yml
+        - cpu-speed: 1.0
+          num-cores: 1.0
+          rank: 5
+          stub-name: stub_default.yml
+        - cpu-speed: 1.0
+          num-cores: 1.0
+          rank: 6
+          stub-name: stub_default.yml
+        - cpu-speed: 1.0
+          num-cores: 1.0
+          rank: 7
+          stub-name: stub_default.yml
+        - cpu-speed: 1.0
+          num-cores: 1.0
+          rank: 8
+          stub-name: stub_default.yml
+        - cpu-speed: 1.0
+          num-cores: 1.0
+          rank: 9
+          stub-name: stub_default.yml
+        - cpu-speed: 1.0
+          num-cores: 1.0
+          rank: 10
+          stub-name: stub_default.yml
+        - cpu-speed: 1.0
+          num-cores: 1.0
+          rank: 11
+          stub-name: stub_default.yml
+        - cpu-speed: 1.0
+          num-cores: 1.0
+          rank: 12
+          stub-name: stub_default.yml
+        - cpu-speed: 1.0
+          num-cores: 1.0
+          rank: 13
+          stub-name: stub_default.yml
+        - cpu-speed: 1.0
+          num-cores: 1.0
+          rank: 14
+          stub-name: stub_default.yml
+        - cpu-speed: 1.0
+          num-cores: 1.0
+          rank: 15
+          stub-name: stub_default.yml
+        - cpu-speed: 1.0
+          num-cores: 1.0
+          rank: 16
+          stub-name: stub_default.yml
+        - cpu-speed: 1.0
+          num-cores: 1.0
+          rank: 17
+          stub-name: stub_default.yml
+        - cpu-speed: 1.0
+          num-cores: 1.0
+          rank: 18
+          stub-name: stub_default.yml
+        - cpu-speed: 1.0
+          num-cores: 1.0
+          rank: 19
+          stub-name: stub_default.yml
+        - cpu-speed: 1.0
+          num-cores: 1.0
+          rank: 20
+          stub-name: stub_default.yml
+        - cpu-speed: 1.0
+          num-cores: 1.0
+          rank: 21
+          stub-name: stub_default.yml
+        - cpu-speed: 1.0
+          num-cores: 1.0
+          rank: 22
+          stub-name: stub_default.yml
+        - cpu-speed: 1.0
+          num-cores: 1.0
+          rank: 23
+          stub-name: stub_default.yml
+        - cpu-speed: 1.0
+          num-cores: 1.0
+          rank: 24
+          stub-name: stub_default.yml
+        - cpu-speed: 1.0
+          num-cores: 1.0
+          rank: 25
+          stub-name: stub_default.yml
+        - cpu-speed: 1.0
+          num-cores: 1.0
+          rank: 26
+          stub-name: stub_default.yml
+        - cpu-speed: 1.0
+          num-cores: 1.0
+          rank: 27
+          stub-name: stub_default.yml
+        - cpu-speed: 1.0
+          num-cores: 1.0
+          rank: 28
+          stub-name: stub_default.yml
+        - cpu-speed: 1.0
+          num-cores: 1.0
+          rank: 29
+          stub-name: stub_default.yml
+        - cpu-speed: 1.0
+          num-cores: 1.0
+          rank: 30
           stub-name: stub_default.yml
