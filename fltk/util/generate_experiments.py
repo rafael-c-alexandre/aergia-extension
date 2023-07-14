@@ -78,7 +78,7 @@ def generate(base_path: Path):
 #     print('Done')
 
 
-def run(base_path: Path):
+def run(base_path: Path, worker: bool, clients: str):
     print(f'Run {base_path}')
     print(list(base_path.iterdir()))
     descr_path = base_path / 'descr.yaml'
@@ -100,7 +100,7 @@ def run(base_path: Path):
         #
         # print(docker_deploy_path)
         run_docker = True
-        generate_compose_file_from_dict(descr_data['deploy']['docker'])
+        generate_compose_file_from_dict(descr_data['deploy']['docker'], worker, clients)
         # generate_compose_file(docker_deploy_path)
 
     exp_files = [x for x in (base_path / 'exps').iterdir() if x.suffix in ['.yaml', '.yml']]
@@ -111,14 +111,16 @@ def run(base_path: Path):
         # Create local network if it does not exist
         print("Creating local network if it does not exist.")
         os.system("docker network inspect local_network_dev >/dev/null 2>&1 || \
-                        docker network create local_network_dev --subnet=10.5.0.0/16")
+                        docker network create --driver=overlay --attachable local_network_dev --subnet=10.5.0.0/16")
         first_prefix = '--build'
 
         for exp_cfg_file in exp_files:
             for replication_id in range(replications):
-                cmd = f'export OPTIONAL_PARAMS="--prefix={replication_id}";export EXP_CONFIG_FILE="{exp_cfg_file}"; docker-compose --compatibility up {first_prefix};'
-                cmd_list.append([replication_id, cmd])
-                first_prefix = ''
+                if "offloading" in str(exp_cfg_file):
+                    node = "worker" if worker else "manager" 
+                    cmd = f'export COMPOSE_PROJECT_NAME={node}_{clients};export OPTIONAL_PARAMS="--prefix={replication_id}";export EXP_CONFIG_FILE="{exp_cfg_file}"; docker-compose --compatibility up {first_prefix};'
+                    cmd_list.append([replication_id, cmd])
+                    first_prefix = ''
     else:
         print('Switching to direct mode')
         for exp_cfg_file in exp_files:

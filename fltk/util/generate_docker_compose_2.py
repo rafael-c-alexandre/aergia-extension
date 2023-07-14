@@ -110,7 +110,7 @@ def generate_clients_proporties_2(clients_dict: dict, path: Path):
         # results += gen_client(k, v, path)
     return results
 
-def generate_compose_file_from_dict(system: dict):
+def generate_compose_file_from_dict(system: dict, worker: bool, clients: str):
     path = Path(system['base_path'])
     client_descriptions = generate_clients_proporties_2(system['clients'], path)
     # client_descriptions = generate_clients_proporties(system['clients'], path)
@@ -119,22 +119,41 @@ def generate_compose_file_from_dict(system: dict):
     system_template_path = path / 'system_stub.yml'
 
     system_template: dict = load_yaml_file(system_template_path)
-
-    for key, item in enumerate(system_template['services']['fl_server']['environment']):
-        if item == 'WORLD_SIZE={world_size}':
-            system_template['services']['fl_server']['environment'][key] = item.format(world_size=world_size)
-    if system['federator']['pin-cores']:
-        cpu_set: str
-        amount = system['federator']['num-cores']
-        if amount > 1:
-            cpu_set = f'{last_core_id}-{last_core_id + amount - 1}'
+    
+    if not worker:    
+        for key, item in enumerate(system_template['services']['fl_server']['environment']):
+            if item == 'WORLD_SIZE={world_size}':
+                system_template['services']['fl_server']['environment'][key] = item.format(world_size=world_size)
+        if system['federator']['pin-cores']:
+            cpu_set: str
+            amount = system['federator']['num-cores']
+            if amount > 1:
+                cpu_set = f'{last_core_id}-{last_core_id + amount - 1}'
+            else:
+                cpu_set = f'{last_core_id}'
+            system_template['services']['fl_server']['cpuset'] = cpu_set
+            last_core_id += amount
         else:
-            cpu_set = f'{last_core_id}'
-        system_template['services']['fl_server']['cpuset'] = cpu_set
-        last_core_id += amount
+            system_template['services']['fl_server'].pop('cpuset')
     else:
-        system_template['services']['fl_server'].pop('cpuset')
-    for idx, client_d in enumerate(client_descriptions):
+        system_template['services'].pop('fl_server')
+    
+    clients_subset = []
+    first_client_i = 0
+    
+    if clients == "all":
+        clients_subset = client_descriptions
+    else:
+        clients_interval = clients.split("-")
+        if len(clients_interval) == 2:
+            first_client_i = int(clients_interval[0])-1
+            last_client_i = int(clients_interval[1])-1
+            clients_subset = client_descriptions[first_client_i:last_client_i+1]
+        else:
+            first_client_i = int(clients_interval[0]) - 1
+            clients_subset = [client_descriptions[first_client_i]]
+    
+    for idx, client_d in enumerate(clients_subset, first_client_i):
         stub_file = path / client_d['stub-file']
         stub_data = load_yaml_file(stub_file)
         cpu_set = None
@@ -148,6 +167,9 @@ def generate_compose_file_from_dict(system: dict):
         local_template, container_name = generate_client(idx + 1, stub_data, world_size, client_d['name'], cpu_set,
                                                          client_d['num_cpu'])
         system_template['services'].update(local_template)
+        if worker:
+            system_template['services'][container_name].pop('depends_on')
+        
         print(container_name)
     with open(r'./docker-compose.yml', 'w') as file:
         yaml.dump(system_template, file, sort_keys=False)

@@ -1,11 +1,11 @@
 ---
 # Experiment configuration
 epochs: 2
-rounds: 10
+rounds: 2
 epochs_per_cycle: 1
 wait_for_clients: true
-net: FashionMNISTCNN
-dataset: fashion-mnist
+net: MNISTCNN
+dataset: mnist
 # Use cuda is available; setting to false will force CPU
 cuda: false
 profiling_time: 10

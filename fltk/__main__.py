@@ -100,7 +100,9 @@ if __name__ == '__main__':
     util_generate_parser.add_argument('path', type=str)
     util_run_parser = subparsers.add_parser('util-run')
     util_run_parser.add_argument('path', type=str)
-
+    util_run_parser.add_argument('--worker', action='store_true') # manager node (has federator) and worker nodes
+    util_run_parser.add_argument('--clients',type=str, default="all")
+    
     remote_parser = subparsers.add_parser('remote')
     single_machine_parser = subparsers.add_parser('single')
     add_default_arguments(remote_parser)
@@ -118,7 +120,7 @@ if __name__ == '__main__':
         print(f'generate for {path}')
         generate(path)
     elif args.action == 'util-run':
-        run(Path(args.path))
+        run(Path(args.path), args.worker, args.clients)
     elif args.action == 'remote':
         run_remote(Path(args.config), args.rank, args.nic, args.host, args.prefix)
     else:

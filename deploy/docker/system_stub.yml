@@ -28,3 +28,4 @@ networks:
   default:
     external:
       name: local_network_dev
+    driver: overlay
