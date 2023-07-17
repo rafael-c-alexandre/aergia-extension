@@ -8,9 +8,10 @@ net: ShakespeareRNN
 dataset: shakespeare
 # Use cuda is available; setting to false will force CPU
 cuda: false
+use_profiler: false
 profiling_time: 50
 warmup_round: false
-output_location: 'output/exp_shakespeare_non_iid_vanilla'
+output_location: 'output/exp_shakespeare_non_iid_fedprox'
 tensor_board_active: true
 clients_per_round: 6
 unique_pairs: true

@@ -294,7 +294,7 @@ class Client(Node):
     def exec_round(self, round_id: int, num_epochs: int, response_id: str, server_ref) -> Tuple[Any, Any, Any, Any, float, float, float]:
         start = time.time()
         self.terminate_training = False
-        loss, weights, num_samples = self.train(round_id, num_epochs)
+        loss, weights, num_samples = self.train(round_id, num_epochs, self.config.use_profiler)
         time_mark_between = time.time()
         accuracy, test_loss = self.test()
 

@@ -17,7 +17,7 @@ class DistributedSamplerWrapper(DistributedSampler):
         if hasattr(dataset, 'classes'):
             self.n_labels = len(dataset.classes)
         else:
-            if isinstance(dataset, ConcatDataset):
+            if isinstance(dataset, ConcatDataset) and hasattr(dataset.datasets[0], 'classes'):
                 self.n_labels = len(dataset.datasets[0].classes)
             else:
                 self.n_labels = 0
@@ -28,7 +28,7 @@ class DistributedSamplerWrapper(DistributedSampler):
         # order the indices by label
         ordered_by_label = [[] for i in range(self.n_labels)]
         
-        if isinstance(dataset, ConcatDataset):
+        if isinstance(dataset, ConcatDataset) and hasattr(dataset.datasets[0], 'classes'):
             dataset_list = dataset.datasets
             concat_targets = []
             for ds in dataset_list:
