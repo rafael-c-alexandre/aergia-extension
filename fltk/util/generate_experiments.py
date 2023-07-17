@@ -77,7 +77,6 @@ def generate(base_path: Path):
 #                 f.write(exp_data)
 #     print('Done')
 
-
 def run(base_path: Path, worker: bool, clients: str):
     print(f'Run {base_path}')
     print(list(base_path.iterdir()))
@@ -117,7 +116,7 @@ def run(base_path: Path, worker: bool, clients: str):
         for exp_cfg_file in exp_files:
             for replication_id in range(replications):
                 if "offloading" in str(exp_cfg_file):
-                    node = "worker" if worker else "manager" 
+                    node = "worker" if worker else "manager"
                     cmd = f'export COMPOSE_PROJECT_NAME={node}_{clients};export OPTIONAL_PARAMS="--prefix={replication_id}";export EXP_CONFIG_FILE="{exp_cfg_file}"; docker-compose --compatibility up {first_prefix};'
                     cmd_list.append([replication_id, cmd])
                     first_prefix = ''
@@ -136,8 +135,7 @@ def run(base_path: Path, worker: bool, clients: str):
         os.system(cmd)
     print('Done')
     # docker_system
-
-
+    
     # name = 'dev'
     # generate_docker(name)
     # base_path = f'{Path(__file__).parent}'

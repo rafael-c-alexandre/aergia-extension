@@ -2,6 +2,5 @@
 deadline: 500
 single_machine: false
 real_time: true
-algorithm_name: 'offloading'
-offloading_option: 2
-offloading_similarity_factor: 0
+algorithm_name: 'vanilla'
+optimizer: FedProx
