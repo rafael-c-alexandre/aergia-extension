@@ -1,7 +1,7 @@
 ---
 # Experiment configuration
 epochs: 2
-rounds: 100
+rounds: 50
 epochs_per_cycle: 1
 wait_for_clients: true
 net: ShakespeareRNN
