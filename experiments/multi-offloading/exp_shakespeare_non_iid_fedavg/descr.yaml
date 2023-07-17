@@ -13,7 +13,7 @@ profiling_time: 50
 warmup_round: false
 output_location: 'output/exp_shakespeare_non_iid_feadavg'
 tensor_board_active: true
-clients_per_round: 3
+clients_per_round: 6
 unique_pairs: true
 #node_groups:
 #  slow: [1, 1]
@@ -23,7 +23,7 @@ data_sampler: "uniform" # "limit labels" || "q sampler" || "dirichlet" || "unifo
 data_sampler_args:
   - 4     # label limit || q probability || alpha || unused
   - 42    # random seed || random seed || random seed || unused
-num_clients: 3
+num_clients: 23
 replications: 1
 deadline_time: 100
 deploy:
