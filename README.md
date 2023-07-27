@@ -156,7 +156,7 @@ On another host, run with other clients (no federator)
 python3 -m fltk util-run experiments/example_docker/ --clients 11-20 --worker
 ```
 
-**Note:** The previous command deploys the clients 11-20 in one host without runnning the federator (`--worker` flag).
+**Note:** The previous command deploys clients 11-20 in one host without runnning the federator (`--worker` flag).
 
 
 ### Single machine (Native)
@@ -188,6 +188,10 @@ Use `ifconfig` to find the name of the interface name on your machine.
 
 ### Google Cloud Platform
 See Manual on brightspace
+
+### Multi Offloading
+
+To use the multi offloading version (multiple slow clients offload to the same fast client), add the option `unique_pairs: false` in the corresponding experiment `descr.yaml`.
 
 </p>
 </details>
